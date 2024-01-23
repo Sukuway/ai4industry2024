@@ -22,6 +22,11 @@ class Stats:
                 count += 1
         return count
     
+    def _extract_x_and_y_for_item(self, input: dict):
+        filtered_dict = {key: value for key, value in input.items() if key not in ('x', 'y')}
+
+        return ((input['x'], input['y']), filtered_dict)
+
     def average_degree(self) -> float:
         """
         average number of not None keys for each entry of the json files
@@ -31,8 +36,8 @@ class Stats:
         for file in self.paths:
             data = json.load(open(file))
 
-            for x in data['planet_osm_point']:
-                sub_dict = {k:x[k] for k in list(x.keys())[1:-1]}
+            for x in data:
+                _, sub_dict = self._extract_x_and_y_for_item(x)
                 res = self._count_not_none(sub_dict)
                 self.degrees.append(res)
 
@@ -47,17 +52,19 @@ class Stats:
         for file in self.paths:
             data = json.load(open(file))
 
-            null_count_per_key = {key: 0 for key in list(data['planet_osm_point'][0].keys())[1:-1]}
+            _, sub_dict = self._extract_x_and_y_for_item(data[0])
+            null_count_per_key = {key: 0 for key in sub_dict}
 
-            for x in data['planet_osm_point']:
-                for key in list(x.keys())[1:-1]:
+            for x in data:
+                _, sub_dict = self._extract_x_and_y_for_item(x)
+                for key in sub_dict:
                     if x[key] == None:
                         null_count_per_key[key] += 1
 
             null_keys = []
 
             for x in null_count_per_key.keys():
-                if null_count_per_key[x] == len(data['planet_osm_point']):
+                if null_count_per_key[x] == len(data):
                     null_keys.append(x)
 
             keys = keys.union(null_keys)
@@ -65,14 +72,22 @@ class Stats:
 
         return keys
     
+    def _mapping_dictionaries(self, points: list) -> (dict, dict):
+        indexes = range(len(points))
+
+        idx_to_xy = {idx:xy for idx,xy in zip(indexes, points)}
+        xy_to_idx = {xy:idx for xy,idx in zip(points, indexes)}
+
+        return idx_to_xy, xy_to_idx
+    
     def unique_key_value_pairs(self) -> set:
         self.unique_key_value = set()
 
         for file in self.paths:
             data = json.load(open(file))
 
-            for x in data['planet_osm_point']:
-                sub_dict = {k:x[k] for k in list(x.keys())[1:-1]}
+            for x in data:
+                _, sub_dict = self._extract_x_and_y_for_item(x)
 
                 for key in sub_dict.keys():
                     if sub_dict[key] != None:
@@ -80,3 +95,33 @@ class Stats:
                         self.unique_key_value.add(name)
 
         return self.unique_key_value
+    
+    def nodes(self) -> set:
+        nodes = set()
+
+        for file in self.paths:
+            data = json.load(open(file))
+
+            for x in data:
+                coords, _ = self._extract_x_and_y_for_item(x)
+                nodes.add(coords)
+
+        return nodes
+
+    def connexions(self) -> list:
+        connexions = []
+
+        for file in self.paths:
+            data = json.load(open(file))
+
+            for x in data:
+                coords, sub_dict = self._extract_x_and_y_for_item(x)
+                neighbours = []
+                for key in sub_dict.keys():
+                    if sub_dict[key] != None:
+                        name = f'{key}/{sub_dict[key]}'
+                        neighbours.append(name)
+
+                connexions.append(((coords), neighbours))
+            
+        return connexions
