@@ -22,34 +22,34 @@ class Stats:
                 count += 1
         return count
     
-    def average_degree(self):
+    def average_degree(self) -> float:
         """
         average number of not None keys for each entry of the json files
         """
         self.degrees = []
 
         for file in self.paths:
-            dict = json.load(open(file))
+            data = json.load(open(file))
 
-            for x in dict['planet_osm_point']:
+            for x in data['planet_osm_point']:
                 sub_dict = {k:x[k] for k in list(x.keys())[1:-1]}
                 res = self._count_not_none(sub_dict)
                 self.degrees.append(res)
 
         return sum(self.degrees)/len(self.degrees)
     
-    def common_null_keys(self):
+    def common_null_keys(self) -> set:
         """
         returns keys that are set to None for all the entries of the json files
         """
         keys = set()
 
         for file in self.paths:
-            dict = json.load(open(file))
+            data = json.load(open(file))
 
-            null_count_per_key = {key: 0 for key in list(dict['planet_osm_point'][0].keys())[1:-1]}
+            null_count_per_key = {key: 0 for key in list(data['planet_osm_point'][0].keys())[1:-1]}
 
-            for x in dict['planet_osm_point']:
+            for x in data['planet_osm_point']:
                 for key in list(x.keys())[1:-1]:
                     if x[key] == None:
                         null_count_per_key[key] += 1
@@ -57,10 +57,26 @@ class Stats:
             null_keys = []
 
             for x in null_count_per_key.keys():
-                if null_count_per_key[x] == len(dict['planet_osm_point']):
+                if null_count_per_key[x] == len(data['planet_osm_point']):
                     null_keys.append(x)
 
             keys = keys.union(null_keys)
             print(f'{file} : {len(null_keys)}/{len(null_count_per_key.keys())}')
 
         return keys
+    
+    def unique_key_value_pairs(self) -> set:
+        self.unique_key_value = set()
+
+        for file in self.paths:
+            data = json.load(open(file))
+
+            for x in data['planet_osm_point']:
+                sub_dict = {k:x[k] for k in list(x.keys())[1:-1]}
+
+                for key in sub_dict.keys():
+                    if sub_dict[key] != None:
+                        name = f'{key}/{sub_dict[key]}'
+                        self.unique_key_value.add(name)
+
+        return self.unique_key_value
