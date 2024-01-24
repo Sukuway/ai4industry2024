@@ -5,17 +5,16 @@ if __name__ == "__main__":
 
     print(f'average degree : {stats.average_degree()}\n')
 
-    unique_key_value = stats.unique_key_value_pairs()
-    print(f'abstract nodes : {len(unique_key_value)}')
+    abstract_nodes = stats.unique_key_value_pairs()
+    print(f'abstract nodes : {len(abstract_nodes)}')
 
     nodes = stats.nodes()
-    print(f'nodes : {len(nodes)}')
-
-    edges = stats.edges()
-    print(f'edges : {len(edges)}')
 
     idx_to_xy, xy_to_idx = stats.mapping_dictionaries(nodes)
     formatted_nodes = [xy_to_idx[node] for node in nodes]
+    print(f'nodes : {len(formatted_nodes)}')
+
+    edges = stats.edges()
 
     formatted_edges = stats.edges_formatting(edges, xy_to_idx)
-    print(f'formatted edges : {formatted_edges[:10]}')
+    print(f'edges : {len(formatted_edges)}')
