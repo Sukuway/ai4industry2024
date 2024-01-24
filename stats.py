@@ -72,7 +72,7 @@ class Stats:
 
         return keys
     
-    def _mapping_dictionaries(self, points: list) -> (dict, dict):
+    def mapping_dictionaries(self, points: list) -> (dict, dict):
         indexes = range(len(points))
 
         idx_to_xy = {idx:xy for idx,xy in zip(indexes, points)}
@@ -108,8 +108,8 @@ class Stats:
 
         return nodes
 
-    def connexions(self) -> list:
-        connexions = []
+    def edges(self) -> list:
+        edges = []
 
         for file in self.paths:
             data = json.load(open(file))
@@ -122,6 +122,18 @@ class Stats:
                         name = f'{key}/{sub_dict[key]}'
                         neighbours.append(name)
 
-                connexions.append(((coords), neighbours))
+                edges.append(((coords), neighbours))
             
-        return connexions
+        return edges
+    
+    def edges_formatting(self, edges: list, xy_to_idx: dict) -> list:
+        formatted_edges = []
+
+        for edge in edges:
+            node = xy_to_idx[edge[0]]
+            abstract_nodes = edge[1]
+
+            for abstract_node in abstract_nodes:
+                formatted_edges.append((abstract_node, node))
+
+        return formatted_edges

@@ -11,6 +11,11 @@ if __name__ == "__main__":
     nodes = stats.nodes()
     print(f'nodes : {len(nodes)}')
 
-    connexions = stats.connexions()
-    print(f'edges : {len(connexions)}')
-    print(connexions[0])
+    edges = stats.edges()
+    print(f'edges : {len(edges)}')
+
+    idx_to_xy, xy_to_idx = stats.mapping_dictionaries(nodes)
+    formatted_nodes = [xy_to_idx[node] for node in nodes]
+
+    formatted_edges = stats.edges_formatting(edges, xy_to_idx)
+    print(f'formatted edges : {formatted_edges[:10]}')
