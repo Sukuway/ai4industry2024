@@ -197,24 +197,17 @@ class Stats:
                     features.add(edge[0])
         return features
     
-    def draft_features(self, nodes: list, N: int, edges: list) -> set:
-        size = int(np.sqrt(len(nodes)))
-        if size * size != len(nodes):
-            raise ValueError("Input list length is not a perfect square.")
+    def draft_features(self, nodes: list, N: int, distance_edges: list, edges: list) -> set:
+        center_point = random.choice(nodes)
+        neighbours = set()
+        for edge in distance_edges:
+            if edge[0] == center_point:
+                neighbours.add(edge[1])
+            elif edge[1] == center_point:
+                neighbours.add(edge[0])
 
-        nodes_matrix = np.array(nodes).reshape(size, size)
-
-        x, y = random.randint(0, size-1), random.randint(0, size-1)
-
-        start_row = max(0, x - N // 2)
-        end_row = min(size, x + N // 2 + 1)
-        start_col = max(0, y - N // 2)
-        end_col = min(size, y + N // 2 + 1)
-
-        neighbours = list(nodes_matrix[start_row:end_row, start_col:end_col].flatten())
-        neighbours.remove(nodes_matrix[x,y])
-
-        chosen_points = random.sample(neighbours, random.randint(2,4))
+        chosen_points = random.sample(list(neighbours), N)
+        
         return self.get_features_from_points(chosen_points, edges)
 
         
