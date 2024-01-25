@@ -1,7 +1,7 @@
-from stats import Stats
+from GraphUtils import GraphUtils
 
 if __name__ == "__main__":
-    stats = Stats(N=10000, folder='data')
+    stats = GraphUtils(N=10000, folder='data')
 
     print(f'average degree : {stats.average_degree()}\n')
 
