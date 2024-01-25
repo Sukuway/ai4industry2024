@@ -1,5 +1,4 @@
 from GraphUtils import GraphUtils
-import matplotlib.pyplot as plt
 import networkx as nx 
 
 class Graph():

@@ -1,22 +1,21 @@
 import folium
 from geopy.distance import geodesic
 
-coordinates = [(47.9959368, 2.7633018), (47.967906, 3.018118), (47.9480331, 2.8704895),(47.9980331, 3.2704895), ]
+def generate_map(points: list, map_name: str = 'map.html'):
+    latitudes = [coord[0] for coord in points]
+    longitudes = [coord[1] for coord in points]
+    center = (sum(latitudes) / len(points), sum(longitudes) / len(points))
 
-latitudes = [coord[0] for coord in coordinates]
-longitudes = [coord[1] for coord in coordinates]
-centre = (sum(latitudes) / len(coordinates), sum(longitudes) / len(coordinates))
+    max_radius = max(geodesic(center, coord).meters for coord in points)
 
-rayon_max = max(geodesic(centre, coord).meters for coord in coordinates)
+    map = folium.Map(location=center, zoom_start=12)
 
-ma_carte = folium.Map(location=centre, zoom_start=12)
+    folium.Circle(
+        location=center,
+        radius=max_radius,
+        color='red',
+        fill=True,
+        fill_color='red'
+    ).add_to(map)
 
-folium.Circle(
-    location=centre,
-    radius=rayon_max,
-    color='red',
-    fill=True,
-    fill_color='red'
-).add_to(ma_carte)
-
-ma_carte.save('ma_carte_cercle_englobant.html')
+    map.save(map_name)
