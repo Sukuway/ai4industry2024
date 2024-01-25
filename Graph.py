@@ -1,0 +1,121 @@
+from stats import Stats
+import matplotlib.pyplot as plt
+import networkx as nx 
+
+class Graph():
+    def __init__(self, N: int, folder: str):
+        self.N = N
+        self.folder = folder
+
+    def init_nodes_and_edges(self):
+        stats = Stats(N=self.N, folder=self.folder)
+
+        abstract_nodes = stats.unique_key_value_pairs()
+        nodes = stats.nodes()
+
+        self.idx_to_xy, self.xy_to_idx = stats.mapping_dictionaries(nodes)
+
+        edges = stats.edges()
+
+        self.abstract_nodes: list = list(abstract_nodes)
+        self.nodes: list = [self.xy_to_idx[node] for node in nodes]
+
+        self.edges: list = stats.edges_formatting(edges, self.xy_to_idx)
+        self.distance_edges: list = stats.distance_edges(self.nodes, N=3)
+
+    def get_all_nodes(self) -> list:
+        return self.nodes + self.abstract_nodes
+    
+    def get_all_edges(self) -> list:
+        return self.edges + self.distance_edges
+
+    def make_graph(self) -> nx.Graph:
+        g = nx.Graph()
+        g.add_nodes_from(self.get_all_nodes)
+        g.add_edges_from(self.get_all_edges)
+        return g
+
+    def edges_to_adjacency_list_undirected(self):
+        adjacency_list = {node: [] for node in self.get_all_nodes()}
+
+        for edge in self.get_all_edges():
+            source, target = edge
+            adjacency_list[source].append(target)
+            adjacency_list[target].append(source)  
+
+        return adjacency_list
+
+    def sub_graph(self, abstract_nodes):
+        keep_edges = [edge for edge in self.get_all_edges() if (edge[0] in abstract_nodes)]
+        keep_nodes = [edge[1] for edge in keep_edges]+[k for k in abstract_nodes]
+        return keep_nodes, keep_edges
+
+    def test_connected(self):
+        g: nx.Graph = self.make_graph()
+        return nx.is_connected(g)
+
+    """def fully_connected(abstract_nodes, nodes, edges):
+        unconnected = []
+        connected = []
+        for i,j in combinations(abstract_nodes, 2):
+            keep_nodes, keep_edges = sub_graph([i,j], nodes, edges)
+            if test_connected(keep_nodes, keep_edges):
+                connected.append((i,j))
+            else :
+                unconnected.append((i,j))
+        return unconnected, connected"""
+
+    def draw(G, color="red"):
+        pos = nx.spring_layout(G)
+        nx.draw(G, pos, with_labels=True, font_weight='bold', node_size=500, node_color=color, font_size=10)
+        plt.show()
+
+    """def get_neighbors_at_depth(adjacency_list, features, depth):
+        visited = set()
+        saved = set()
+
+        def dfs(nodes, features):
+
+            if len(nodes) > depth:
+                return
+            
+            for neighbor in adjacency_list[nodes[-1]]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    if  (neighbor in features) and (neighbor != nodes[0]):
+                        for k in nodes:
+                            if k not in features:
+                                saved.add(k)
+                    dfs([k for k in nodes]+[neighbor], features)
+
+        for feature in features:
+            dfs([feature],features)
+    
+        return saved
+
+    def get_neighbors_at_distance(adjacency_list, features, dist):
+        visited = set()
+        saved = set()
+
+        def dfs(nodes, features):
+            total_dist = 0
+            for i in range(1,len(nodes)-1):
+                total_dist+=distance(i,i+1)
+
+            if total_dist > dist:
+                return
+            
+            for neighbor in adjacency_list[nodes[-1]]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    if  (neighbor in features) and (neighbor != nodes[0]):
+                        for k in nodes:
+                            if k not in features:
+                                saved.add(k)
+                    dfs([k for k in nodes]+[neighbor], features)
+
+        for feature in features:
+            dfs([feature],features)
+    
+        return saved"""
+
