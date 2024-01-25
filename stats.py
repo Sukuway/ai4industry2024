@@ -105,19 +105,22 @@ class Stats:
     
     def unique_key_value_pairs(self) -> set:
         self.unique_key_value = set()
+        treated_nodes: int = 0
 
         for file in self.paths:
             data = json.load(open(file))
 
             for x in data:
+                treated_nodes += 1
                 _, sub_dict = self._extract_x_and_y_for_item(x)
 
                 for key in sub_dict.keys():
                     if sub_dict[key] != None:
                         name = f'{key}/{sub_dict[key]}'
                         self.unique_key_value.add(name)
-                        if len(self.unique_key_value) >= self.N:
-                            return self.unique_key_value
+                if treated_nodes >= self.N:
+                    return self.unique_key_value
+                
 
         return self.unique_key_value
     
@@ -167,7 +170,7 @@ class Stats:
 
         return formatted_edges
 
-    def distance_edges(self, nodes: list, idx_to_xy: dict, N:int, threshold: float = 2.) -> float:
+    def distance_edges(self, nodes: list, N:int) -> list:
         size = int(np.sqrt(len(nodes)))
         if size * size != len(nodes):
             raise ValueError("Input list length is not a perfect square.")

@@ -19,5 +19,5 @@ if __name__ == "__main__":
     formatted_edges = stats.edges_formatting(edges, xy_to_idx)
     print(f'edges : {len(formatted_edges)}')
 
-    distance_edges = stats.distance_edges(formatted_nodes, idx_to_xy, N=3)
+    distance_edges = stats.distance_edges(formatted_nodes, N=3)
     print(f'distance edges : {len(distance_edges)}')
