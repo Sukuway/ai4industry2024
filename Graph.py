@@ -33,7 +33,7 @@ class Graph():
         g = nx.Graph()
         g.add_nodes_from(self.get_all_nodes())
         g.add_edges_from(self.get_all_edges())
-        c = ["red" for i in self.get_all_nodes() if type(i)==str]+["lightblue" for i in self.get_all_nodes() if type(i)==int]
+        c = ["lightblue" for i in self.get_all_nodes() if type(i)==int]+["red" for i in self.get_all_nodes() if type(i)==str]
         return g, c
 
     def edges_to_adjacency_list_undirected(self):
