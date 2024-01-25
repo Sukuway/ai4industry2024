@@ -1,7 +1,6 @@
 import json
 import os
 from math import radians, sin, cos, sqrt, atan2
-from itertools import combinations
 import random
 import numpy as np
 
@@ -18,11 +17,17 @@ class Stats:
         return count
     
     def _extract_x_and_y_for_item(self, input: dict):
+        """
+        Extracts X and Y column from a given input of a json file.
+        """
         filtered_dict = {key: value for key, value in input.items() if key not in ('x', 'y')}
 
         return ((input['x'], input['y']), filtered_dict)
     
     def _haversine_distance(self, coord1, coord2):
+        """
+        Computes distance between two points using Haversine formula.
+        """
         R = 6371.0
 
         lon1, lat1 = coord1
@@ -86,6 +91,11 @@ class Stats:
         return keys
     
     def mapping_dictionaries(self, points: list) -> (dict, dict):
+        """
+        Returns two mapping dictionnaries for the given points list.
+        xy_to_idx dictionary maps points (as (latitude,longitude) tuple) to indexes.
+        idx_to_xy maps indexes to (latitude,longitude) tuple.
+        """
         indexes = range(len(points))
 
         idx_to_xy = {idx:xy for idx,xy in zip(indexes, points)}
@@ -94,6 +104,10 @@ class Stats:
         return idx_to_xy, xy_to_idx
     
     def unique_key_value_pairs(self) -> set:
+        """
+        Returns all unique key,value pairs in all the dictionaries contained in the json files, except the coordinates.
+        These values are used as abstract nodes in graphs.
+        """
         self.unique_key_value = set()
         treated_nodes: int = 0
 
@@ -115,6 +129,9 @@ class Stats:
         return self.unique_key_value
     
     def nodes(self) -> set:
+        """
+        Returns all nodes found in the json files, as (latitude,longitude) tuples
+        """
         nodes = set()
 
         for file in self.paths:
@@ -129,6 +146,10 @@ class Stats:
         return nodes
 
     def edges(self) -> list:
+        """
+        Computes the relations between geographic nodes and its features as edges.
+        Returns a list of tuples containing a geographic node and the list of its features (geo_node,[features..])
+        """
         edges = []
 
         for file in self.paths:
@@ -149,6 +170,9 @@ class Stats:
         return edges
     
     def edges_formatting(self, edges: list, xy_to_idx: dict) -> list:
+        """
+        Formats the edges (returned from edges) function in order to fit with networkx specs 
+        """
         formatted_edges = []
 
         for edge in edges:
@@ -161,6 +185,10 @@ class Stats:
         return formatted_edges
 
     def distance_edges(self, nodes: list, idx_to_xy: dict, N:int, treshold=1) -> list:
+        """
+        Computes edges between close points. Treshold is used to adjust the limit to cosider if points are closed enough
+        to be linked.
+        """
         size = int(np.sqrt(len(nodes)))
         if size * size != len(nodes):
             raise ValueError("Input list length is not a perfect square.")
@@ -189,15 +217,21 @@ class Stats:
 
         return edges
     
-    def get_features_from_points(self, points, edges) -> set:
+    def get_features_from_points(self, nodes, edges) -> set:
+        """
+        Returns the corresponding features for a list of given nodes
+        """
         features = set()
         for edge in edges:
-            for point in points:
+            for point in nodes:
                 if edge[1] == point:
                     features.add(edge[0])
         return features
     
     def draft_features(self, nodes: list, N: int, distance_edges: list, edges: list) -> set:
+        """
+        Returns a set of at least two features to test our graph algorithm.
+        """
         def _draft_features(self, nodes: list, N: int, distance_edges: list, edges: list):
             center_point = random.choice(nodes)
             neighbours = set()
@@ -218,7 +252,7 @@ class Stats:
         
         features = _draft_features(self, nodes, N, distance_edges, edges)
         while len(features) < 2:
-            features = _draft_features
+            features = _draft_features(self, nodes, N, distance_edges, edges)
         return features
 
         
