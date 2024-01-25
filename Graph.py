@@ -70,7 +70,6 @@ class Graph():
         saved = set()
 
         def dfs(nodes, features):
-            print(nodes)
             if len(nodes) > depth:
                 return
             
@@ -97,8 +96,6 @@ class Graph():
         saved = set()
         
         def dfs(nodes, total_dist):
-
-            print(nodes, total_dist)
             
             if (len(nodes) > 2) and (nodes[-2] != str and nodes[-1] != str):
  
