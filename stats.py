@@ -1,9 +1,14 @@
 import json
 import os
+from itertools import combinations
+from math import radians, sin, cos, sqrt, atan2
+import numpy as np
+import copy
 
 class Stats:
-    def __init__(self, folder=os.getcwd()):
+    def __init__(self, N: int, folder=os.getcwd()):
         self.paths = [os.path.join(folder, file) for file in os.listdir(folder) if file.endswith(".json")]
+        self.N = N
 
     def _common_elements(self, arr1: list, arr2: list, arr3: list):
         set1 = set(arr1)
@@ -26,6 +31,24 @@ class Stats:
         filtered_dict = {key: value for key, value in input.items() if key not in ('x', 'y')}
 
         return ((input['x'], input['y']), filtered_dict)
+    
+    def _haversine_distance(self, coord1, coord2):
+        R = 6371.0
+
+        lon1, lat1 = coord1
+        lon2, lat2 = coord2
+
+        lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
+
+        dlat = lat2 - lat1
+        dlon = lon2 - lon1
+
+        a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+        c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        distance = R * c
+
+        return distance
 
     def average_degree(self) -> float:
         """
@@ -93,6 +116,8 @@ class Stats:
                     if sub_dict[key] != None:
                         name = f'{key}/{sub_dict[key]}'
                         self.unique_key_value.add(name)
+                        if len(self.unique_key_value) >= self.N:
+                            return self.unique_key_value
 
         return self.unique_key_value
     
@@ -105,6 +130,8 @@ class Stats:
             for x in data:
                 coords, _ = self._extract_x_and_y_for_item(x)
                 nodes.add(coords)
+                if len(nodes) >= self.N:
+                    return nodes
 
         return nodes
 
@@ -123,6 +150,8 @@ class Stats:
                         neighbours.append(name)
 
                 edges.append(((coords), neighbours))
+                if len(edges) >= self.N:
+                    return edges
             
         return edges
     
@@ -137,3 +166,28 @@ class Stats:
                 formatted_edges.append((abstract_node, node))
 
         return formatted_edges
+
+    def distance_edges(self, nodes: list, idx_to_xy: dict, N:int, threshold: float = 2.) -> float:
+        size = int(np.sqrt(len(nodes)))
+        if size * size != len(nodes):
+            raise ValueError("Input list length is not a perfect square.")
+
+        matrix = np.array(nodes).reshape(size, size)
+
+        edges = []
+
+        for i in range(size):
+            for j in range(size):
+                # Compute the coordinates of the N * N square centered on (i, j)
+                start_row = max(0, i - N // 2)
+                end_row = min(size, i + N // 2 + 1)
+                start_col = max(0, j - N // 2)
+                end_col = min(size, j + N // 2 + 1)
+
+                neighbours = list(matrix[start_row:end_row, start_col:end_col].flatten())
+                neighbours.remove(matrix[i,j])
+
+                for neighbour in neighbours:
+                    edges.append((matrix[i,j],neighbour))
+
+        return edges
