@@ -160,7 +160,7 @@ class Stats:
 
         return formatted_edges
 
-    def distance_edges(self, nodes: list, N:int) -> list:
+    def distance_edges(self, nodes: list, idx_to_xy: dict, N:int, treshold=1) -> list:
         size = int(np.sqrt(len(nodes)))
         if size * size != len(nodes):
             raise ValueError("Input list length is not a perfect square.")
@@ -180,8 +180,12 @@ class Stats:
                 neighbours = list(matrix[start_row:end_row, start_col:end_col].flatten())
                 neighbours.remove(matrix[i,j])
 
+                center_coords = idx_to_xy[matrix[i,j]]
+
                 for neighbour in neighbours:
-                    edges.append((matrix[i,j],neighbour))
+                    neighbour_coords = idx_to_xy[neighbour]
+                    if self._haversine_distance(center_coords, neighbour_coords) <= treshold:
+                        edges.append((matrix[i,j],neighbour))
 
         return edges
     
@@ -201,7 +205,6 @@ class Stats:
         nodes_matrix = np.array(nodes).reshape(size, size)
 
         x, y = random.randint(0, size-1), random.randint(0, size-1)
-        center_point = nodes_matrix[x, y]
 
         start_row = max(0, x - N // 2)
         end_row = min(size, x + N // 2 + 1)
