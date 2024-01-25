@@ -1,5 +1,5 @@
 from Graph import Graph
-
+from map import generate_map
 
 if __name__ == "__main__":
 
@@ -13,4 +13,5 @@ if __name__ == "__main__":
     points = G.get_neighbors_at_depth(adgency_list, features, 10)
     points = [G.idx_to_xy[i] for i in points]
     print(points)
+    generate_map(points)
 
