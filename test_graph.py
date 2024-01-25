@@ -1,8 +1,16 @@
 from Graph import Graph
+import matplotlib.pyplot as plt
+import networkx as nx 
+
+def draw(G, color="red"):
+        pos = nx.spring_layout(G)
+        nx.draw(G, pos, with_labels=True, font_weight='bold', node_size=500, node_color=color, font_size=10)
+        plt.show()
 
 if __name__ == "__main__":
 
-    G = Graph(100, "data")
-    G.init_nodes_and_edges(N=10)
-    G.draw(G.make_graph())
+    graph = Graph(100, "data")
+    graph.init_nodes_and_edges(N=10)
+    nxgraph = graph.make_graph()
+    draw(nxgraph)
     
