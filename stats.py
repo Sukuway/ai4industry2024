@@ -5,9 +5,19 @@ import random
 import numpy as np
 
 class Stats:
+    """
+    Class that contains utility functions for graphs, such as nodes and edges creation.
+    It uses the given folder path to search for json files in which to look.
+    Only the N firsts entries of the json files are considered. For simplifying neighbours computation,
+    N has to be a perfect square. 
+    """
     def __init__(self, N: int, folder=os.getcwd()):
         self.paths = [os.path.join(folder, file) for file in os.listdir(folder) if file.endswith(".json")]
         self.N = N
+
+        sq_root = int(sqrt(self.N))
+        if sq_root * sq_root != N:
+            raise ValueError("N has to be a perfect square.")
     
     def _count_not_none(self, input_dictionary: dict):
         count = 0
@@ -254,5 +264,3 @@ class Stats:
         while len(features) < 2:
             features = _draft_features(self, nodes, N, distance_edges, edges)
         return features
-
-        
