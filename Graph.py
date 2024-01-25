@@ -29,12 +29,14 @@ class Graph():
         return self.edges + self.distance_edges
 
     def make_graph(self) -> nx.Graph:
+        """creates a networkx graph"""
         g = nx.Graph()
         g.add_nodes_from(self.get_all_nodes())
         g.add_edges_from(self.get_all_edges())
         return g
 
     def edges_to_adjacency_list_undirected(self):
+        """turn an edge lis into an ajacency matrix"""
         adjacency_list = {node: [] for node in self.get_all_nodes()}
 
         for edge in self.get_all_edges():
@@ -45,6 +47,7 @@ class Graph():
         return adjacency_list
 
     def sub_graph(self, abstract_nodes):
+        """make a sub graph : keeps everyr node connected to the desired abstract nodes"""
         keep_edges = [edge for edge in self.get_all_edges() if (edge[0] in abstract_nodes)]
         keep_nodes = [edge[1] for edge in keep_edges]+[k for k in abstract_nodes]
         return keep_nodes, keep_edges
