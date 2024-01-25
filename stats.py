@@ -1,9 +1,7 @@
 import json
 import os
-from itertools import combinations
 from math import radians, sin, cos, sqrt, atan2
 import numpy as np
-import copy
 
 class Stats:
     def __init__(self, N: int, folder=os.getcwd()):
