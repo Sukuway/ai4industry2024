@@ -91,6 +91,7 @@ class Graph():
                     dfs([k for k in nodes]+[neighbor], features)
 
         for feature in features:
+            visited.add(feature)
             dfs([feature],features)
     
         return saved
@@ -100,18 +101,16 @@ class Graph():
         visited = set()
         saved = set()
         
-        def dfs(nodes, features):
+        def dfs(nodes, total_dist):
 
-            print(nodes)
-            total_dist = 0
-            index = 0
-            for i in range(len(nodes)):
-                if type(nodes[i]) == str:
-                    index = i
-            for i in range(index+1,len(nodes)-1):
-                coord1 = self.idx_to_xy[nodes[i]]
-                coord2 = self.idx_to_xy[nodes[i+1]]
-                total_dist+=self.stats._haversine_distance(coord1, coord2)
+            print(nodes, total_dist)
+            
+            if (len(nodes) > 2) and (nodes[-2] != str and nodes[-1] != str):
+ 
+                    coord1 = self.idx_to_xy[nodes[-2]]
+                    coord2 = self.idx_to_xy[nodes[-1]]
+                    total_dist+=self.stats._haversine_distance(coord1, coord2)
+
 
             if total_dist > dist:
                 return
@@ -125,10 +124,11 @@ class Graph():
                         for k in nodes:
                             if k not in features:
                                 saved.add(k)
-                    dfs([k for k in nodes]+[neighbor], features)
+                    dfs([k for k in nodes]+[neighbor], total_dist)
 
         for feature in features:
-            dfs([feature],features)
+            visited.add(feature)
+            dfs([feature],0)
     
         return saved
 

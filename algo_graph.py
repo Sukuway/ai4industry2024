@@ -13,8 +13,8 @@ if __name__ == "__main__":
     G.init_nodes_and_edges(N=10)
 
     adgency_list = G.edges_to_adjacency_list_undirected()
-    points = G.get_neighbors_at_distance(adgency_list, G.abstract_nodes[:4], 1000)
-    points = G.get_neighbors_at_depth(adgency_list, G.abstract_nodes[:4], 20)
-    points = [G.idx_to_xy(i) for i in points]
+    #points = G.get_neighbors_at_distance(adgency_list, G.abstract_nodes[:4], 20)
+    points = G.get_neighbors_at_depth(adgency_list, G.abstract_nodes[:4], 10)
+    points = [G.idx_to_xy[i] for i in points]
     print(points)
 
