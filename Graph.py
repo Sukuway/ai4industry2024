@@ -99,12 +99,18 @@ class Graph():
     def get_neighbors_at_distance(self, adjacency_list, features, dist):
         visited = set()
         saved = set()
-
+        
         def dfs(nodes, features):
+
+            print(nodes)
             total_dist = 0
-            for i in range(1,len(nodes)-1):
-                coord1 = self.idx_to_xy(nodes[i])
-                coord2 = self.idx_to_xy(nodes[i+1])
+            index = 0
+            for i in range(len(nodes)):
+                if type(nodes[i]) == str:
+                    index = i
+            for i in range(index+1,len(nodes)-1):
+                coord1 = self.idx_to_xy[nodes[i]]
+                coord2 = self.idx_to_xy[nodes[i+1]]
                 total_dist+=self.stats._haversine_distance(coord1, coord2)
 
             if total_dist > dist:
