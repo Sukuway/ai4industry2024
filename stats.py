@@ -198,16 +198,27 @@ class Stats:
         return features
     
     def draft_features(self, nodes: list, N: int, distance_edges: list, edges: list) -> set:
-        center_point = random.choice(nodes)
-        neighbours = set()
-        for edge in distance_edges:
-            if edge[0] == center_point:
-                neighbours.add(edge[1])
-            elif edge[1] == center_point:
-                neighbours.add(edge[0])
+        def _draft_features(self, nodes: list, N: int, distance_edges: list, edges: list):
+            center_point = random.choice(nodes)
+            neighbours = set()
+            for edge in distance_edges:
+                if edge[0] == center_point:
+                    neighbours.add(edge[1])
+                elif edge[1] == center_point:
+                    neighbours.add(edge[0])
 
-        chosen_points = random.sample(list(neighbours), N)
+            if len(neighbours) < N:
+                chosen_points = neighbours
+            else:
+                chosen_points = random.sample(list(neighbours), N)
+
+            features = self.get_features_from_points(chosen_points, edges)
+
+            return features
         
-        return self.get_features_from_points(chosen_points, edges)
+        features = _draft_features(self, nodes, N, distance_edges, edges)
+        while len(features) < 2:
+            features = _draft_features
+        return features
 
         
