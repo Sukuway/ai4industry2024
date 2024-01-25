@@ -6,6 +6,8 @@ import networkx as nx
 from itertools import combinations
 
 
+
+
 abstract_nodes = ['A', 'B', 'C']
 nodes = [1, 2, 3, 4, 5, 6, 7]
 edges = [('A', 1), ('B', 2), ('B', 3), (1,5), (5,3)]
@@ -59,7 +61,7 @@ def get_neighbors_at_depth(adjacency_list, features, depth):
     saved = set()
 
     def dfs(nodes, features):
-
+        print(nodes)
         if len(nodes) > depth:
             return
         
@@ -121,12 +123,12 @@ if __name__ == "__main__":
     abstract_nodes = list(abstract_nodes)
     formatted_nodes = [xy_to_idx[node] for node in nodes]
     formatted_edges = stats.edges_formatting(edges, xy_to_idx)
-    distance_edges = stats.distance_edges(formatted_nodes, idx_to_xy, N=3)
+    distance_edges = stats.distance_edges(formatted_nodes, N=3)
 
 
+    adgency_list = edges_to_adjacency_list_undirected(abstract_nodes,formatted_nodes,formatted_edges+distance_edges)
+    print(get_neighbors_at_depth(adgency_list), abstract_nodes[:4], 20)
 
-    print(get_neighbors_at_depth(edges_to_adjacency_list_undirected(abstract_nodes,formatted_nodes,formatted_edges+distance_edges), abstract_nodes[:4], 4))
-    
     #print(get_neighbors_at_distance(edges_to_adjacency_list_undirected(abstract_nodes,nodes,edges), ["A","B"], 4))
 
     # stats = Stats('data')
