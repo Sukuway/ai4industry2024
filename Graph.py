@@ -31,8 +31,8 @@ class Graph():
 
     def make_graph(self) -> nx.Graph:
         g = nx.Graph()
-        g.add_nodes_from(self.get_all_nodes)
-        g.add_edges_from(self.get_all_edges)
+        g.add_nodes_from(self.get_all_nodes())
+        g.add_edges_from(self.get_all_edges())
         return g
 
     def edges_to_adjacency_list_undirected(self):
@@ -65,10 +65,6 @@ class Graph():
                 unconnected.append((i,j))
         return unconnected, connected"""
 
-    def draw(G, color="red"):
-        pos = nx.spring_layout(G)
-        nx.draw(G, pos, with_labels=True, font_weight='bold', node_size=500, node_color=color, font_size=10)
-        plt.show()
 
     def get_neighbors_at_depth(self, adjacency_list, features, depth):
         visited = set()
