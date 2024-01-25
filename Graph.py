@@ -1,4 +1,4 @@
-from stats import Stats
+from GraphUtils import GraphUtils
 import matplotlib.pyplot as plt
 import networkx as nx 
 
@@ -8,7 +8,7 @@ class Graph():
         self.folder = folder
 
     def init_nodes_and_edges(self, N=3):
-        self.stats = Stats(N=self.N, folder=self.folder)
+        self.stats = GraphUtils(N=self.N, folder=self.folder)
 
         abstract_nodes = self.stats.unique_key_value_pairs()
         nodes = self.stats.nodes()

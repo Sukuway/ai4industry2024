@@ -4,7 +4,7 @@ from math import radians, sin, cos, sqrt, atan2
 import random
 import numpy as np
 
-class Stats:
+class GraphUtils:
     """
     Class that contains utility functions for graphs, such as nodes and edges creation.
     It uses the given folder path to search for json files in which to look.
