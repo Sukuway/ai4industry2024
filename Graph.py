@@ -33,7 +33,8 @@ class Graph():
         g = nx.Graph()
         g.add_nodes_from(self.get_all_nodes())
         g.add_edges_from(self.get_all_edges())
-        return g
+        c = ["red" for i in self.get_all_nodes() if type(i)==str]+["lightblue" for i in self.get_all_nodes() if type(i)==int]
+        return g, c
 
     def edges_to_adjacency_list_undirected(self):
         """turn an edge lis into an ajacency matrix"""

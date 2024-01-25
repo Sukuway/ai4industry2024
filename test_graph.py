@@ -11,6 +11,6 @@ if __name__ == "__main__":
 
     graph = Graph(100, "data")
     graph.init_nodes_and_edges(N=10)
-    nxgraph = graph.make_graph()
-    draw(nxgraph)
+    nxgraph, c = graph.make_graph()
+    draw(nxgraph,c)
     
