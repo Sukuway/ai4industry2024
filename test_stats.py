@@ -21,3 +21,6 @@ if __name__ == "__main__":
 
     distance_edges = stats.distance_edges(formatted_nodes, N=3)
     print(f'distance edges : {len(distance_edges)}')
+
+    drafted_features = stats.draft_features(formatted_nodes, 3, formatted_edges)
+    print(f'drafted features : {drafted_features}')

@@ -1,22 +1,14 @@
 import json
 import os
 from math import radians, sin, cos, sqrt, atan2
+from itertools import combinations
+import random
 import numpy as np
 
 class Stats:
     def __init__(self, N: int, folder=os.getcwd()):
         self.paths = [os.path.join(folder, file) for file in os.listdir(folder) if file.endswith(".json")]
         self.N = N
-
-    def _common_elements(self, arr1: list, arr2: list, arr3: list):
-        set1 = set(arr1)
-        set2 = set(arr2)
-        set3 = set(arr3)
-
-        common_set = set1.intersection(set2, set3)
-        common_list = list(common_set)
-
-        return common_list
     
     def _count_not_none(self, input_dictionary: dict):
         count = 0
@@ -192,3 +184,34 @@ class Stats:
                     edges.append((matrix[i,j],neighbour))
 
         return edges
+    
+    def get_features_from_points(self, points, edges) -> set:
+        features = set()
+        for edge in edges:
+            for point in points:
+                if edge[1] == point:
+                    features.add(edge[0])
+        return features
+    
+    def draft_features(self, nodes: list, N: int, edges: list) -> set:
+        size = int(np.sqrt(len(nodes)))
+        if size * size != len(nodes):
+            raise ValueError("Input list length is not a perfect square.")
+
+        nodes_matrix = np.array(nodes).reshape(size, size)
+
+        x, y = random.randint(0, size-1), random.randint(0, size-1)
+        center_point = nodes_matrix[x, y]
+
+        start_row = max(0, x - N // 2)
+        end_row = min(size, x + N // 2 + 1)
+        start_col = max(0, y - N // 2)
+        end_col = min(size, y + N // 2 + 1)
+
+        neighbours = list(nodes_matrix[start_row:end_row, start_col:end_col].flatten())
+        neighbours.remove(nodes_matrix[x,y])
+
+        chosen_points = random.sample(neighbours, random.randint(2,4))
+        return self.get_features_from_points(chosen_points, edges)
+
+        
