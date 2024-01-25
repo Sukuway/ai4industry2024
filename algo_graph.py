@@ -56,7 +56,7 @@ def draw(G, color="red"):
     nx.draw(G, pos, with_labels=True, font_weight='bold', node_size=500, node_color=color, font_size=10)
     plt.show()
 
-def get_neighbors_at_depth(adjacency_list, features, depth):
+def get_neighbors_at_depth(abstract_nodes, adjacency_list, features, depth):
     visited = set()
     saved = set()
 
@@ -66,6 +66,8 @@ def get_neighbors_at_depth(adjacency_list, features, depth):
             return
         
         for neighbor in adjacency_list[nodes[-1]]:
+            if (neighbor not in features) and (neighbor in abstract_nodes):
+                return
             if neighbor not in visited:
                 visited.add(neighbor)
                 if  (neighbor in features) and (neighbor != nodes[0]):
@@ -114,7 +116,7 @@ def get_neighbors_at_distance(adjacency_list, features, dist):
 
 if __name__ == "__main__":
 
-    stats = Stats(N=10000, folder='data')
+    stats = Stats(N=22500, folder='data')
     abstract_nodes = stats.unique_key_value_pairs()
     nodes = stats.nodes()
     idx_to_xy, xy_to_idx = stats.mapping_dictionaries(nodes)
@@ -123,57 +125,10 @@ if __name__ == "__main__":
     abstract_nodes = list(abstract_nodes)
     formatted_nodes = [xy_to_idx[node] for node in nodes]
     formatted_edges = stats.edges_formatting(edges, xy_to_idx)
-    distance_edges = stats.distance_edges(formatted_nodes, N=3)
+    distance_edges = stats.distance_edges(formatted_nodes, N=10)
 
 
     adgency_list = edges_to_adjacency_list_undirected(abstract_nodes,formatted_nodes,formatted_edges+distance_edges)
-    print(get_neighbors_at_depth(adgency_list), abstract_nodes[:4], 20)
+    print(get_neighbors_at_depth(abstract_nodes, adgency_list, abstract_nodes[:4], 15))
 
-    #print(get_neighbors_at_distance(edges_to_adjacency_list_undirected(abstract_nodes,nodes,edges), ["A","B"], 4))
-
-    # stats = Stats('data')
-
-    # unique_key_value = stats.unique_key_value_pairs()
-    # abstract_nodes = list(unique_key_value)
-    
-
-    # nodes = stats.nodes()
-    # edges = stats.edges()
-
-    # idx_to_xy, xy_to_idx = stats.mapping_dictionaries(nodes)
-    # nodes = [xy_to_idx[node] for node in nodes]
-    # edges = stats.edges_formatting(edges, xy_to_idx)
-
-
-    # sub_nodes, sub_edges = sub_graph(abstract_nodes[:150],nodes, edges)
-
-
-    # full_nodes = [str(k) for k in sub_nodes]
-    # node_color = ["blue" for i in range(len(sub_nodes))]
-
-    # print(len(full_nodes), len(node_color))
-
-    # G = make_graph(full_nodes, sub_edges)
-    # draw(G,node_color)
-    
-    #commu = nx.community.louvain_communities(make_graph(nodes+abstract_nodes, edges))
-    
-    # unco, co = fully_connected(abstract_nodes, nodes, edges)
-    # print(len(unco), len(co))
-
-
-    # sub_nodes, sub_edges = sub_graph(abstract_nodes, nodes, edges)
-
-    # G = nx.Graph()
-
-    # G.add_nodes_from(sub_nodes)
-    # G.add_edges_from(sub_edges)
-
-    # print(nx.is_connected(G))
-
-    # pos = nx.spring_layout(G)
-
-    # nx.draw(G, pos, with_labels=True, font_weight='bold', node_size=100, node_color='skyblue', font_size=10)
-
-    # plt.show()
 
