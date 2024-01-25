@@ -21,7 +21,7 @@ class Graph():
         self.nodes: list = [self.xy_to_idx[node] for node in nodes]
 
         self.edges: list = self.stats.edges_formatting(edges, self.xy_to_idx)
-        self.distance_edges: list = self.stats.distance_edges(self.nodes, N)
+        self.distance_edges: list = self.stats.distance_edges(self.nodes, self.idx_to_xy, N)
 
     def get_all_nodes(self) -> list:
         return self.nodes + self.abstract_nodes
